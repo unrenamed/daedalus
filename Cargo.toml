@@ -1,0 +1,18 @@
+[package]
+name = "daedalus"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rand = "0.8.4"
+maplit = "1.0.2"
+termion = "1.5.1"
+ctrlc = "3.2.1"
+dialoguer = "0.10.0"
+phf = { version = "0.10", features = ["macros"] }
+tui = "0.18"
+crossterm = "0.23"
+argh = "0.1"
+lazy_static = "1.4.0"
