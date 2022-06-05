@@ -1,10 +1,8 @@
+use crate::utils::random::get_start_pos;
 use crate::utils::types::Pos;
 use crate::{
     app::MazeSnapshot,
-    grid::{
-        pole::Pole::{E, N, S, W},
-        Grid,
-    },
+    grid::pole::Pole::{E, N, S, W},
 };
 use rand::prelude::*;
 
@@ -85,7 +83,7 @@ impl IGenerator for HuntAndKill {
     }
 
     fn run(&mut self) -> Vec<MazeSnapshot> {
-        let start_pos = get_start_pos(&self.generator.grid);
+        let start_pos = get_start_pos(self.generator.grid.width(), self.generator.grid.height());
         let mut x = start_pos.0;
         let mut y = start_pos.1;
 
@@ -118,11 +116,4 @@ impl IGenerator for HuntAndKill {
 
         self.generator.get_snapshots()
     }
-}
-
-fn get_start_pos(grid: &Grid) -> Pos {
-    let mut rng = rand::thread_rng();
-    let y = rng.gen_range(0..grid.height());
-    let x = rng.gen_range(0..grid.width());
-    (x, y)
 }

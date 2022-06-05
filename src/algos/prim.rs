@@ -1,6 +1,7 @@
+use crate::app::MazeSnapshot;
 use crate::grid::pole::Pole;
+use crate::utils::random::get_start_pos;
 use crate::utils::types::Pos;
-use crate::{app::MazeSnapshot, grid::Grid};
 use rand::prelude::*;
 
 use super::{Generator, IGenerator, Snapshot};
@@ -71,7 +72,8 @@ impl IGenerator for Prim {
     fn run(&mut self) -> Vec<MazeSnapshot> {
         let mut rng = rand::thread_rng();
 
-        self.mark(get_start_pos(&self.generator.grid));
+        let start_pos = get_start_pos(self.generator.grid.width(), self.generator.grid.height());
+        self.mark(start_pos);
 
         self.generator.highlights.clear();
         self.generator.highlights.extend(&self.frontiers);
@@ -100,13 +102,6 @@ impl IGenerator for Prim {
 
         self.generator.get_snapshots()
     }
-}
-
-fn get_start_pos(grid: &Grid) -> Pos {
-    let mut rng = rand::thread_rng();
-    let y = rng.gen_range(0..grid.height());
-    let x = rng.gen_range(0..grid.width());
-    (x, y)
 }
 
 fn direction(x: usize, y: usize, nx: usize, ny: usize) -> Option<Pole> {
