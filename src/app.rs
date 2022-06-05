@@ -1,5 +1,5 @@
 use crate::{
-    algos::{HuntAndKill, Prim, RecursiveBacktracking},
+    algos::{HuntAndKill, IGenerator, Prim, RecursiveBacktracking},
     grid::Grid,
     utils::types::Coords,
 };
@@ -60,8 +60,8 @@ pub struct App<'a> {
     pub tabs: TabsState<'a>,
     pub enhanced_graphics: bool,
     pub is_generator_running: bool,
-    pub generator: Option<Box<dyn Iterator<Item = MazeSnapshot>>>,
-    pub snapshot: Option<MazeSnapshot>,
+    pub snapshots: Option<Vec<MazeSnapshot>>,
+    pub curr_idx: usize,
 }
 
 impl<'a> App<'a> {
@@ -72,8 +72,8 @@ impl<'a> App<'a> {
             tabs: TabsState::new(vec!["Tab1", "Tab2"]),
             enhanced_graphics,
             is_generator_running: false,
-            generator: None,
-            snapshot: None,
+            snapshots: None,
+            curr_idx: 0,
         }
     }
 
@@ -98,8 +98,12 @@ impl<'a> App<'a> {
     }
 
     pub fn on_tick(&mut self) {
-        if let Some(snapshot) = self.get_next_snapshot() {
-            self.snapshot = Some(snapshot);
+        if !self.is_generator_running {
+            return;
+        }
+
+        if self.get_next_snapshot().is_some() {
+            self.curr_idx += 1;
         } else {
             self.is_generator_running = false;
         }
@@ -110,18 +114,26 @@ impl<'a> App<'a> {
             return;
         }
 
-        // let mut method = RecursiveBacktracking::new(20, 20);
-        // let mut method = HuntAndKill::new(20, 20);
-        let mut method = Prim::new(20, 20);
-        method.run();
-        self.generator = Some(Box::new(method.into_iter()));
+        // let mut method = RecursiveBacktracking::init(20, 20);
+        // let mut method = HuntAndKill::init(20, 20);
+        let mut method = Prim::init(20, 20);
 
+        self.snapshots = Some(method.run());
+        self.curr_idx = 0;
         self.is_generator_running = true;
     }
 
-    fn get_next_snapshot(&mut self) -> Option<MazeSnapshot> {
-        if let Some(generator) = &mut self.generator {
-            generator.next()
+    pub fn get_next_snapshot(&self) -> Option<&MazeSnapshot> {
+        self.get_snapshot(self.curr_idx + 1)
+    }
+
+    pub fn get_curr_snapshot(&self) -> Option<&MazeSnapshot> {
+        self.get_snapshot(self.curr_idx)
+    }
+
+    fn get_snapshot(&self, idx: usize) -> Option<&MazeSnapshot> {
+        if let Some(snapshosts) = &self.snapshots {
+            snapshosts.get(idx)
         } else {
             None
         }

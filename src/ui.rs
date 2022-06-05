@@ -45,7 +45,7 @@ where
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(area);
 
-    if let Some(snapshot) = &app.snapshot {
+    if let Some(snapshot) = app.get_curr_snapshot() {
         let maze_container = MazeContainer::new(snapshot.get_grid(), snapshot.get_highlights())
             .block(Block::default().title("Prim's:").borders(Borders::ALL));
 
