@@ -12,13 +12,13 @@ use tui::{
 
 use crate::{
     grid::{cell::Cell, pole::Pole, Grid},
-    utils::types::Coords,
+    utils::types::Pos,
 };
 
 pub struct MazeContainer<'a> {
     pub block: Option<Block<'a>>,
     pub grid: &'a Grid,
-    pub stack: &'a Vec<Coords>,
+    pub stack: &'a Vec<Pos>,
 }
 
 impl<'a> Widget for MazeContainer<'a> {
@@ -41,7 +41,7 @@ impl<'a> Widget for MazeContainer<'a> {
 }
 
 impl<'a> MazeContainer<'a> {
-    pub fn new(grid: &'a Grid, stack: &'a Vec<Coords>) -> Self {
+    pub fn new(grid: &'a Grid, stack: &'a Vec<Pos>) -> Self {
         MazeContainer {
             block: None,
             stack,

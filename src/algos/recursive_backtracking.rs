@@ -1,4 +1,4 @@
-use crate::utils::types::Coords;
+use crate::utils::types::Pos;
 use crate::{
     app::MazeSnapshot,
     grid::pole::Pole::{E, N, S, W},
@@ -12,12 +12,12 @@ pub struct RecursiveBacktracking {
 }
 
 impl RecursiveBacktracking {
-    fn carve_passages_from(&mut self, coords: Coords) {
+    fn carve_passages_from(&mut self, pos: Pos) {
         let mut dirs = [N, W, E, S];
         dirs.shuffle(&mut rand::thread_rng());
 
         for dir in dirs {
-            let next = match self.generator.grid.get_next_cell_coords(coords, dir) {
+            let next = match self.generator.grid.get_next_cell_pos(pos, dir) {
                 Ok(next) => next,
                 Err(_) => continue,
             };
@@ -28,7 +28,7 @@ impl RecursiveBacktracking {
                 continue;
             }
 
-            if let Ok(next) = self.generator.grid.carve_passage(coords, dir) {
+            if let Ok(next) = self.generator.grid.carve_passage(pos, dir) {
                 self.generator.highlights.push(next);
                 self.carve_passages_from(next);
                 self.generator.highlights.pop();

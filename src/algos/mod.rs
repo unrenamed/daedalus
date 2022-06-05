@@ -1,4 +1,4 @@
-use crate::{app::MazeSnapshot, grid::Grid, utils::types::Coords};
+use crate::{app::MazeSnapshot, grid::Grid, utils::types::Pos};
 
 pub mod hunt_and_kill;
 pub mod prim;
@@ -15,7 +15,7 @@ pub trait Snapshot {
 
 pub struct Generator {
     grid: Grid,
-    highlights: Vec<Coords>,
+    highlights: Vec<Pos>,
     snapshots: Vec<MazeSnapshot>,
 }
 

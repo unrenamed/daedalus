@@ -1,4 +1,4 @@
-use crate::utils::types::Coords;
+use crate::utils::types::Pos;
 use crate::{
     app::MazeSnapshot,
     grid::{
@@ -17,14 +17,14 @@ pub struct HuntAndKill {
 }
 
 impl HuntAndKill {
-    fn walk(&mut self, coords: Coords) -> Option<Coords> {
+    fn walk(&mut self, pos: Pos) -> Option<Pos> {
         let mut directions = [N, E, W, S];
         directions.shuffle(&mut rand::thread_rng());
 
         for dir in directions {
-            if let Ok(next_coords) = self.generator.grid.get_next_cell_coords(coords, dir) {
-                if !self.generator.grid.is_cell_visited(next_coords) {
-                    return self.generator.grid.carve_passage(coords, dir).ok();
+            if let Ok(next_pos) = self.generator.grid.get_next_cell_pos(pos, dir) {
+                if !self.generator.grid.is_cell_visited(next_pos) {
+                    return self.generator.grid.carve_passage(pos, dir).ok();
                 }
             }
         }
@@ -32,7 +32,7 @@ impl HuntAndKill {
         None
     }
 
-    fn hunt(&mut self) -> Option<Coords> {
+    fn hunt(&mut self) -> Option<Pos> {
         let directions = [N, E, W, S];
 
         for y in self.hunt_start_index..self.generator.grid.height() {
@@ -56,8 +56,8 @@ impl HuntAndKill {
                 }
 
                 for dir in directions {
-                    if let Ok(next_coords) = self.generator.grid.get_next_cell_coords((x, y), dir) {
-                        if self.generator.grid.is_cell_visited(next_coords) {
+                    if let Ok(next_pos) = self.generator.grid.get_next_cell_pos((x, y), dir) {
+                        if self.generator.grid.is_cell_visited(next_pos) {
                             self.generator.grid.carve_passage((x, y), dir).ok();
 
                             return Some((x, y));
@@ -85,9 +85,9 @@ impl IGenerator for HuntAndKill {
     }
 
     fn run(&mut self) -> Vec<MazeSnapshot> {
-        let start_coords = get_start_coords(&self.generator.grid);
-        let mut x = start_coords.0;
-        let mut y = start_coords.1;
+        let start_pos = get_start_pos(&self.generator.grid);
+        let mut x = start_pos.0;
+        let mut y = start_pos.1;
 
         loop {
             self.generator.make_snapshot();
@@ -120,7 +120,7 @@ impl IGenerator for HuntAndKill {
     }
 }
 
-fn get_start_coords(grid: &Grid) -> Coords {
+fn get_start_pos(grid: &Grid) -> Pos {
     let mut rng = rand::thread_rng();
     let y = rng.gen_range(0..grid.height());
     let x = rng.gen_range(0..grid.width());

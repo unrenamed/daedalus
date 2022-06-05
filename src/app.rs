@@ -1,7 +1,7 @@
 use crate::{
     algos::{HuntAndKill, IGenerator, Prim, RecursiveBacktracking},
     grid::Grid,
-    utils::types::Coords,
+    utils::types::Pos,
 };
 
 pub struct TabsState<'a> {
@@ -28,11 +28,11 @@ impl<'a> TabsState<'a> {
 
 pub struct MazeSnapshot {
     grid: Grid,
-    highlights: Vec<Coords>,
+    highlights: Vec<Pos>,
 }
 
 impl MazeSnapshot {
-    pub fn new(grid: Grid, highlights: Vec<Coords>) -> Self {
+    pub fn new(grid: Grid, highlights: Vec<Pos>) -> Self {
         Self { grid, highlights }
     }
 
@@ -40,7 +40,7 @@ impl MazeSnapshot {
         &self.grid
     }
 
-    pub fn get_highlights(&self) -> &Vec<Coords> {
+    pub fn get_highlights(&self) -> &Vec<Pos> {
         &self.highlights
     }
 }

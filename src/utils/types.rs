@@ -1,1 +1,1 @@
-pub type Coords = (usize, usize);
+pub type Pos = (usize, usize);

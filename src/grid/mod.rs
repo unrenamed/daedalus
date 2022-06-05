@@ -2,7 +2,7 @@ pub mod cell;
 pub mod pole;
 pub mod walls;
 
-use crate::utils::{num, types::Coords};
+use crate::utils::{num, types::Pos};
 use cell::Cell;
 use pole::{Pole, OPPOSITE_POLES, POLE_DIR_X, POLE_DIR_Y};
 use std::fmt;
@@ -10,17 +10,17 @@ use std::iter;
 
 #[derive(Debug, Clone)]
 pub struct TransitError {
-    pub coords: Coords,
+    pub pos: Pos,
     pub reason: String,
 }
 
 impl fmt::Display for TransitError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let (x, y) = self.coords;
+        let (x, y) = self.pos;
 
         write!(
             f,
-            "Cannot move to a cell. Reason: {}. Coords: x = {}, y = {}",
+            "Cannot move to a cell. Reason: {}. Pos: x = {}, y = {}",
             self.reason, x, y
         )
     }
@@ -93,93 +93,93 @@ impl Grid {
         self.width
     }
 
-    pub fn mark_cell(&mut self, coords: Coords) {
-        self.get_cell_mut(coords).mark()
+    pub fn mark_cell(&mut self, pos: Pos) {
+        self.get_cell_mut(pos).mark()
     }
 
-    pub fn is_cell_visited(&self, coords: Coords) -> bool {
-        self.get_cell(coords).visited()
+    pub fn is_cell_visited(&self, pos: Pos) -> bool {
+        self.get_cell(pos).visited()
     }
 
-    pub fn is_cell_marked(&self, coords: Coords) -> bool {
-        self.get_cell(coords).marked()
+    pub fn is_cell_marked(&self, pos: Pos) -> bool {
+        self.get_cell(pos).marked()
     }
 
-    pub fn get_cell(&self, coords: Coords) -> &Cell {
-        let (x, y) = coords;
+    pub fn get_cell(&self, pos: Pos) -> &Cell {
+        let (x, y) = pos;
         &self.cells[y][x]
     }
 
-    pub fn add_wall(&mut self, coords: Coords, pole: Pole) {
-        let next = self.get_next_cell_coords(coords, pole).unwrap();
+    pub fn add_wall(&mut self, pos: Pos, pole: Pole) {
+        let next = self.get_next_cell_pos(pos, pole).unwrap();
         let opp_pole = *OPPOSITE_POLES.get(&pole).unwrap();
 
         // add a wall towards a pole
-        self.get_cell_mut(coords).add_wall(pole);
+        self.get_cell_mut(pos).add_wall(pole);
 
         // add a wall to a next cell towards an opposite pole
         self.get_cell_mut(next).add_wall(opp_pole);
     }
 
-    pub fn carve_passage(&mut self, coords: Coords, pole: Pole) -> TransitResult<Coords> {
-        let next = self.get_next_cell_coords(coords, pole)?;
+    pub fn carve_passage(&mut self, pos: Pos, pole: Pole) -> TransitResult<Pos> {
+        let next = self.get_next_cell_pos(pos, pole)?;
         let opp_pole = *OPPOSITE_POLES.get(&pole).unwrap();
 
-        self.get_cell_mut(coords).remove_wall(pole); // remove a wall towards a pole
+        self.get_cell_mut(pos).remove_wall(pole); // remove a wall towards a pole
         self.get_cell_mut(next).remove_wall(opp_pole); // remove a wall of a next cell towards an opposite pole
 
-        self.visit_cell(coords);
+        self.visit_cell(pos);
         self.visit_cell(next);
 
         Ok(next)
     }
 
-    pub fn get_next_cell_coords(&mut self, coords: Coords, pole: Pole) -> TransitResult<Coords> {
-        self.validate_transit(coords, pole)?;
+    pub fn get_next_cell_pos(&mut self, pos: Pos, pole: Pole) -> TransitResult<Pos> {
+        self.validate_transit(pos, pole)?;
 
-        let (x, y) = coords;
+        let (x, y) = pos;
         let nx = num::add(x, *POLE_DIR_X.get(&pole).unwrap());
         let ny = num::add(y, *POLE_DIR_Y.get(&pole).unwrap());
 
         Ok((nx, ny))
     }
 
-    fn visit_cell(&mut self, coords: Coords) {
-        self.get_cell_mut(coords).visit()
+    fn visit_cell(&mut self, pos: Pos) {
+        self.get_cell_mut(pos).visit()
     }
 
-    fn get_cell_mut(&mut self, coords: Coords) -> &mut Cell {
-        let (x, y) = coords;
+    fn get_cell_mut(&mut self, pos: Pos) -> &mut Cell {
+        let (x, y) = pos;
         &mut self.cells[y][x]
     }
 
-    fn validate_transit(&self, coords: Coords, pole: Pole) -> TransitResult<()> {
-        let (x, y) = coords;
+    fn validate_transit(&self, pos: Pos, pole: Pole) -> TransitResult<()> {
+        let (x, y) = pos;
 
         if x < 1 && pole == Pole::W {
             return Err(TransitError {
-                coords: (x, y),
+                pos: (x, y),
                 reason: String::from("First cell in a row cannot go West"),
             });
         }
 
         if y < 1 && pole == Pole::N {
             return Err(TransitError {
-                coords: (x, y),
+                pos: (x, y),
                 reason: String::from("First row in the grid cannot go North"),
             });
         }
 
         if x + 1 == self.width && pole == Pole::E {
             return Err(TransitError {
-                coords: (x, y),
+                pos: (x, y),
                 reason: String::from("Last column in the grid cannot go East"),
             });
         }
 
         if y + 1 == self.height && pole == Pole::S {
             return Err(TransitError {
-                coords: (x, y),
+                pos: (x, y),
                 reason: String::from("Last row in the grid cannot go South"),
             });
         }
