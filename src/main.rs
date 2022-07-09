@@ -1,30 +1,23 @@
-mod algos;
 mod app;
-mod grid;
+mod event;
 mod terminal;
-mod ui;
-mod utils;
-mod widgets;
-
-use crate::terminal::run;
 
 use argh::FromArgs;
-use std::{error::Error, time::Duration};
+use eyre::Result;
+use std::time::Duration;
 
 #[derive(Debug, FromArgs)]
 #[argh(description = "...")]
 struct Cli {
     /// time in ms between two ticks.
-    #[argh(option, short = 't', default = "10")]
+    #[argh(option, short = 't', default = "15")]
     tick_rate: u64,
-    /// whether unicode symbols are used to improve the overall look of the app
-    #[argh(option, default = "true")]
-    enhanced_graphics: bool,
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+#[tokio::main]
+async fn main() -> Result<()> {
     let cli: Cli = argh::from_env();
     let tick_rate = Duration::from_millis(cli.tick_rate);
-    run(tick_rate, cli.enhanced_graphics)?;
+    terminal::run(tick_rate).await?;
     Ok(())
 }

@@ -1,4 +1,4 @@
-use crate::{app::MazeSnapshot, grid::Grid, utils::types::Pos};
+use super::{grid::Grid, state::MazeSnapshot, utils::types::Pos};
 
 pub mod hunt_and_kill;
 pub mod prim;

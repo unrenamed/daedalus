@@ -1,17 +1,12 @@
 use tui::{
     buffer::Buffer,
-    layout::{Constraint, Rect},
-    style::{Color, Modifier, Style},
-    symbols,
-    text::{Span, Spans},
-    widgets::{
-        canvas::{Canvas, Context, Line, Points, Rectangle},
-        Block, BorderType, Borders, Row, Table, Widget,
-    },
+    layout::Rect,
+    style::Color,
+    widgets::{Block, Widget},
 };
 
-use crate::{
-    grid::{cell::Cell, pole::Pole, Grid},
+use crate::app::{
+    grid::{pole::Pole, Grid},
     utils::types::Pos,
 };
 

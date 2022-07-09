@@ -1,7 +1,8 @@
-use crate::app::MazeSnapshot;
-use crate::grid::pole::Pole;
-use crate::utils::random::get_start_pos;
-use crate::utils::types::Pos;
+use crate::app::{
+    grid::pole::Pole,
+    state::MazeSnapshot,
+    utils::{random::get_start_pos, types::Pos},
+};
 use rand::prelude::*;
 
 use super::{Generator, IGenerator, Snapshot};

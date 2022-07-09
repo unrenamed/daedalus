@@ -1,7 +1,7 @@
-use crate::utils::types::Pos;
-use crate::{
-    app::MazeSnapshot,
+use crate::app::{
     grid::pole::Pole::{E, N, S, W},
+    state::MazeSnapshot,
+    utils::types::Pos,
 };
 use rand::prelude::*;
 

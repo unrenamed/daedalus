@@ -2,7 +2,7 @@ pub mod cell;
 pub mod pole;
 pub mod walls;
 
-use crate::utils::{num, types::Pos};
+use super::utils::{num, types::Pos};
 use cell::Cell;
 use pole::{Pole, OPPOSITE_POLES, POLE_DIR_X, POLE_DIR_Y};
 use std::fmt;
