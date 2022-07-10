@@ -9,8 +9,8 @@ use std::time::Duration;
 #[derive(Debug, FromArgs)]
 #[argh(description = "...")]
 struct Cli {
-    /// time in ms between two ticks.
-    #[argh(option, short = 't', default = "15")]
+    /// time in ms between two ticks. defaults to: 33ms = 30 FPS
+    #[argh(option, short = 't', default = "33")]
     tick_rate: u64,
 }
 
