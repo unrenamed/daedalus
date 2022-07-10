@@ -8,13 +8,13 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use eyre::Result;
+use log::LevelFilter;
 use std::{io, sync::Arc, time::Duration};
 use tui::{
     backend::{Backend, CrosstermBackend},
     Terminal,
 };
-
-use eyre::Result;
 
 pub async fn run(tick_rate: Duration) -> Result<()> {
     // setup terminal
@@ -27,6 +27,10 @@ pub async fn run(tick_rate: Duration) -> Result<()> {
     // create app
     let app = Arc::new(tokio::sync::Mutex::new(App::new("Maze Drawer")));
     let app_ui = Arc::clone(&app);
+
+    // configure logger
+    tui_logger::init_logger(LevelFilter::Debug).unwrap();
+    tui_logger::set_default_level(log::LevelFilter::Debug);
 
     // run app
     start_ui(&mut terminal, &app_ui, tick_rate).await?;

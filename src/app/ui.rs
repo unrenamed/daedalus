@@ -8,6 +8,7 @@ use tui::{
 };
 
 use crate::app::{widgets::maze_container::MazeContainer, App};
+use tui_logger::TuiLoggerWidget;
 
 pub fn draw<B: Backend>(f: &mut Frame<B>, app: &mut App) {
     let chunks = Layout::default()
@@ -55,6 +56,11 @@ where
         }
     }
 
+    let dashboard_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(15), Constraint::Percentage(100)])
+        .split(chunks[1]);
+
     // Iterate through all elements in the `items` app and append some debug text to it.
     let items: Vec<ListItem> = app
         .state
@@ -78,7 +84,11 @@ where
         .highlight_symbol("> ");
 
     // We can now render the item list
-    f.render_stateful_widget(items, chunks[1], &mut app.state.items.state);
+    f.render_stateful_widget(items, dashboard_chunks[0], &mut app.state.items.state);
+
+    // Render logs
+    let logs = draw_logs();
+    f.render_widget(logs, dashboard_chunks[1]);
 }
 
 fn draw_second_tab<B>(f: &mut Frame<B>, _app: &mut App, area: Rect)
@@ -86,4 +96,20 @@ where
     B: Backend,
 {
     // Draw tab content
+}
+
+fn draw_logs<'a>() -> TuiLoggerWidget<'a> {
+    TuiLoggerWidget::default()
+        .style_error(Style::default().fg(Color::Red))
+        .style_debug(Style::default().fg(Color::Green))
+        .style_warn(Style::default().fg(Color::Yellow))
+        .style_trace(Style::default().fg(Color::Gray))
+        .style_info(Style::default().fg(Color::Blue))
+        .block(
+            Block::default()
+                .title("Logs")
+                .border_style(Style::default().fg(Color::White))
+                .borders(Borders::ALL),
+        )
+        .style(Style::default().fg(Color::White))
 }
