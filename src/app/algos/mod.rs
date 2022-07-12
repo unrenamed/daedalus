@@ -2,11 +2,13 @@ use super::{grid::Grid, state::MazeSnapshot, utils::types::Pos};
 
 pub mod hunt_and_kill;
 pub mod prim;
+pub mod kruskal;
 pub mod recursive_backtracking;
 
 pub use hunt_and_kill::HuntAndKill;
 pub use prim::Prim;
 pub use recursive_backtracking::RecursiveBacktracking;
+pub use kruskal::Kruskal;
 
 pub trait Snapshot {
     fn make_snapshot(&mut self);
