@@ -1,7 +1,7 @@
 use tui::widgets::ListState;
 
 use crate::app::{
-    algos::{HuntAndKill, IGenerator, Kruskal, Prim, RecursiveBacktracking},
+    algos::{AldousBroder, Eller, HuntAndKill, IGenerator, Kruskal, Prim, RecursiveBacktracking},
     grid::Grid,
     utils::types::Pos,
 };
@@ -11,6 +11,8 @@ pub enum Algorithm {
     Prims,
     HuntAndKill,
     Kruskal,
+    AldousBroder,
+    Eller,
 }
 
 pub struct TabsState<'a> {
@@ -128,6 +130,8 @@ impl<'a> Default for AppState<'a> {
                 ("Prim's", Algorithm::Prims),
                 ("Hunt & Kill", Algorithm::HuntAndKill),
                 ("Kruskal's", Algorithm::Kruskal),
+                ("Aldou-Broder's", Algorithm::AldousBroder),
+                ("Eller's", Algorithm::Eller),
             ]),
         }
     }
@@ -184,6 +188,8 @@ impl<'a> AppState<'a> {
                     Algorithm::RecursiveBacktracking => RecursiveBacktracking::init(20, 20).run(),
                     Algorithm::HuntAndKill => HuntAndKill::init(20, 20).run(),
                     Algorithm::Kruskal => Kruskal::init(20, 20).run(),
+                    Algorithm::AldousBroder => AldousBroder::init(20, 20).run(),
+                    Algorithm::Eller => Eller::init(20, 20).run(),
                 };
 
                 self.snapshots = Some(snapshots);

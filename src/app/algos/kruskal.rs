@@ -3,7 +3,6 @@ use crate::app::{
     state::MazeSnapshot,
     utils::{
         arena::{ArenaTree, NodeId},
-        random::get_start_pos,
         types::Pos,
     },
 };
@@ -16,7 +15,6 @@ type Edges = Vec<Edge>;
 
 pub struct Kruskal {
     generator: Generator,
-    frontiers: Vec<Pos>,
 }
 
 impl Kruskal {
@@ -47,10 +45,7 @@ impl Kruskal {
 impl IGenerator for Kruskal {
     fn init(width: usize, height: usize) -> Self {
         let generator = Generator::new(width, height);
-        Self {
-            generator,
-            frontiers: vec![],
-        }
+        Self { generator }
     }
 
     fn run(&mut self) -> Vec<MazeSnapshot> {
