@@ -25,7 +25,7 @@ pub enum AppReturn {
 pub struct App<'a> {
     title: &'a str,
     /// Contextual actions
-    actions: Actions,
+    pub actions: Actions,
     /// State
     pub state: AppState<'a>,
 }

@@ -3,12 +3,14 @@ use tui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Span, Spans},
-    widgets::{Block, Borders, List, ListItem, Tabs},
+    widgets::{Block, Borders, List, ListItem, Tabs, Table, Cell, Row, BorderType},
     Frame,
 };
 
 use crate::app::{widgets::maze_container::MazeContainer, App};
 use tui_logger::TuiLoggerWidget;
+
+use super::actions::Actions;
 
 pub fn draw<B: Backend>(f: &mut Frame<B>, app: &mut App) {
     let chunks = Layout::default()
@@ -58,7 +60,7 @@ where
 
     let dashboard_chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Min(15), Constraint::Percentage(100)])
+        .constraints([Constraint::Min(20), Constraint::Percentage(100)])
         .split(chunks[1]);
 
     // Iterate through all elements in the `items` app and append some debug text to it.
@@ -68,10 +70,15 @@ where
         .items
         .iter()
         .map(|i| {
-            let mut lines = vec![Spans::from(i.0)];
+            let lines = vec![Spans::from(i.0)];
             ListItem::new(lines).style(Style::default().fg(Color::White))
         })
         .collect();
+
+    let control_panel_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Min(30), Constraint::Length(70)].as_ref())
+        .split(dashboard_chunks[1]);
 
     // Create a List from all list items and highlight the currently selected one
     let mut text_color = Color::LightGreen;
@@ -84,11 +91,15 @@ where
         .highlight_symbol("> ");
 
     // We can now render the item list
-    f.render_stateful_widget(items, dashboard_chunks[0], &mut app.state.items.state);
+    f.render_stateful_widget(items, control_panel_chunks[0], &mut app.state.items.state);
+
+    // Draw the help block
+    let help = draw_help(&app.actions);
+    f.render_widget(help, control_panel_chunks[1]);
 
     // Render logs
     let logs = draw_logs();
-    f.render_widget(logs, dashboard_chunks[1]);
+    f.render_widget(logs, dashboard_chunks[0]);
 }
 
 fn draw_second_tab<B>(f: &mut Frame<B>, _app: &mut App, area: Rect)
@@ -112,4 +123,37 @@ fn draw_logs<'a>() -> TuiLoggerWidget<'a> {
                 .borders(Borders::ALL),
         )
         .style(Style::default().fg(Color::White))
+}
+
+fn draw_help(actions: &Actions) -> Table {
+    let key_style = Style::default().fg(Color::LightCyan);
+    let help_style = Style::default().fg(Color::Gray);
+
+    let mut rows = vec![];
+    for action in actions.actions().iter() {
+        let mut first = true;
+        for key in action.keys() {
+            let help = if first {
+                first = false;
+                action.to_string()
+            } else {
+                String::from("")
+            };
+            let row = Row::new(vec![
+                Cell::from(Span::styled(key.to_string(), key_style)),
+                Cell::from(Span::styled(help, help_style)),
+            ]);
+            rows.push(row);
+        }
+    }
+
+    Table::new(rows)
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .border_type(BorderType::Plain)
+                .title("Help"),
+        )
+        .widths(&[Constraint::Length(20), Constraint::Min(40)])
+        .column_spacing(1)
 }
