@@ -17,14 +17,6 @@ impl Cell {
         }
     }
 
-    pub fn empty() -> Cell {
-        Cell {
-            walls: Walls::empty(),
-            visited: false,
-            marked: false,
-        }
-    }
-
     pub fn get_walls(&self) -> &Walls {
         &self.walls
     }
@@ -35,10 +27,6 @@ impl Cell {
 
     pub fn marked(&self) -> bool {
         self.marked
-    }
-
-    pub fn add_wall(&mut self, pole: Pole) {
-        self.walls.add(pole)
     }
 
     pub fn remove_wall(&mut self, pole: Pole) {

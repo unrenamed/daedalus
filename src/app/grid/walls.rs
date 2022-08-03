@@ -12,10 +12,12 @@ impl Walls {
         Walls::build(true)
     }
 
+    #[allow(dead_code)]
     pub fn empty() -> Walls {
         Walls::build(false)
     }
 
+    #[allow(dead_code)]
     pub fn add(&mut self, pole: Pole) {
         let exist = self.get_wall_mut(pole);
         *exist = true;

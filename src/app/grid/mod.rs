@@ -44,45 +44,9 @@ impl Grid {
         }
     }
 
+    #[allow(dead_code)]
     pub fn cells(&self) -> &Cells {
         &self.cells
-    }
-
-    // Emptys the grid cells thus keeping the border walls only. This should be used when a maze
-    // generation algorithm that uses a "wall adding" technique, rather than a "passage carving"
-    // one, is selected
-    pub fn drain(&mut self) {
-        let mut cells = vec![vec![Cell::empty(); self.width]; self.height];
-
-        // Add Northern walls to the cells in the first row
-        for cell in cells[0].iter_mut() {
-            (*cell).add_wall(Pole::N);
-        }
-
-        // Add Southern walls to the cells in the last row
-        for cell in cells[self.height - 1].iter_mut() {
-            (*cell).add_wall(Pole::S);
-        }
-
-        // Add Western walls to the cells in the first column
-        for y in 0..cells.len() {
-            for x in 0..cells[y].len() {
-                if x == 0 {
-                    cells[y][x].add_wall(Pole::W);
-                }
-            }
-        }
-
-        // Add Eastern walls to the cells in the last column
-        for y in 0..cells.len() {
-            for x in 0..cells[y].len() {
-                if x == cells[y].len() - 1 {
-                    cells[y][x].add_wall(Pole::E);
-                }
-            }
-        }
-
-        self.cells = cells;
     }
 
     pub fn height(&self) -> usize {
@@ -108,17 +72,6 @@ impl Grid {
     pub fn get_cell(&self, pos: Pos) -> &Cell {
         let (x, y) = pos;
         &self.cells[y][x]
-    }
-
-    pub fn add_wall(&mut self, pos: Pos, pole: Pole) {
-        let next = self.get_next_cell_pos(pos, pole).unwrap();
-        let opp_pole = *OPPOSITE_POLES.get(&pole).unwrap();
-
-        // add a wall towards a pole
-        self.get_cell_mut(pos).add_wall(pole);
-
-        // add a wall to a next cell towards an opposite pole
-        self.get_cell_mut(next).add_wall(opp_pole);
     }
 
     pub fn carve_passage(&mut self, pos: Pos, pole: Pole) -> TransitResult<Pos> {

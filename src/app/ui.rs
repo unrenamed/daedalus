@@ -102,7 +102,7 @@ where
     f.render_widget(logs, dashboard_chunks[0]);
 }
 
-fn draw_second_tab<B>(f: &mut Frame<B>, _app: &mut App, area: Rect)
+fn draw_second_tab<B>(_f: &mut Frame<B>, _app: &mut App, _area: Rect)
 where
     B: Backend,
 {
