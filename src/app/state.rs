@@ -184,12 +184,14 @@ impl<'a> AppState<'a> {
         if let Some(idx) = self.items.state.selected() {
             if let Some(algo) = self.items.items.get(idx) {
                 let snapshots = match algo.1 {
-                    Algorithm::Prims => Prim::init(20, 20).run(),
-                    Algorithm::RecursiveBacktracking => RecursiveBacktracking::init(20, 20).run(),
-                    Algorithm::HuntAndKill => HuntAndKill::init(20, 20).run(),
-                    Algorithm::Kruskal => Kruskal::init(20, 20).run(),
-                    Algorithm::AldousBroder => AldousBroder::init(20, 20).run(),
-                    Algorithm::Eller => Eller::init(20, 20).run(),
+                    Algorithm::Prims => self.generate_maze::<Prim>(),
+                    Algorithm::RecursiveBacktracking => {
+                        self.generate_maze::<RecursiveBacktracking>()
+                    }
+                    Algorithm::HuntAndKill => self.generate_maze::<HuntAndKill>(),
+                    Algorithm::Kruskal => self.generate_maze::<Kruskal>(),
+                    Algorithm::AldousBroder => self.generate_maze::<AldousBroder>(),
+                    Algorithm::Eller => self.generate_maze::<Eller>(),
                 };
 
                 self.snapshots = Some(snapshots);
@@ -223,5 +225,9 @@ impl<'a> AppState<'a> {
         } else {
             None
         }
+    }
+
+    fn generate_maze<T: IGenerator>(&self) -> Vec<MazeSnapshot> {
+        T::init(10, 10).run()
     }
 }
