@@ -153,11 +153,15 @@ impl<'a> AppState<'a> {
     }
 
     pub fn select_prev_algo(&mut self) {
-        self.items.previous();
+        if !self.is_generator_running {
+            self.items.previous();
+        }
     }
 
     pub fn select_next_algo(&mut self) {
-        self.items.next();
+        if !self.is_generator_running {
+            self.items.next();
+        }
     }
 
     pub fn on_tick(&mut self) {

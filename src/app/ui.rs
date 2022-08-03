@@ -74,13 +74,13 @@ where
         .collect();
 
     // Create a List from all list items and highlight the currently selected one
+    let mut text_color = Color::LightGreen;
+    if app.state.is_generator_running {
+        text_color = Color::Yellow;
+    }
     let items = List::new(items)
         .block(Block::default().borders(Borders::ALL).title("Algorithm"))
-        .highlight_style(
-            Style::default()
-                .fg(Color::LightGreen)
-                .add_modifier(Modifier::BOLD),
-        )
+        .highlight_style(Style::default().fg(text_color).add_modifier(Modifier::BOLD))
         .highlight_symbol("> ");
 
     // We can now render the item list
