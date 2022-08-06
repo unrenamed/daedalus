@@ -78,7 +78,7 @@ where
     let control_panel_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Min(30), Constraint::Length(70)].as_ref())
-        .split(dashboard_chunks[1]);
+        .split(dashboard_chunks[0]);
 
     // Create a List from all list items and highlight the currently selected one
     let mut text_color = Color::LightGreen;
@@ -99,7 +99,7 @@ where
 
     // Render logs
     let logs = draw_logs();
-    f.render_widget(logs, dashboard_chunks[0]);
+    f.render_widget(logs, dashboard_chunks[1]);
 }
 
 fn draw_second_tab<B>(_f: &mut Frame<B>, _app: &mut App, _area: Rect)
