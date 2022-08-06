@@ -16,7 +16,7 @@ use tui::{
     Terminal,
 };
 
-pub async fn run(tick_rate: Duration) -> Result<()> {
+pub async fn run(tick_rate: Duration, width: usize, height: usize) -> Result<()> {
     // setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -25,7 +25,7 @@ pub async fn run(tick_rate: Duration) -> Result<()> {
     let mut terminal = Terminal::new(backend)?;
 
     // create app
-    let app = Arc::new(tokio::sync::Mutex::new(App::new("Maze Drawer")));
+    let app = Arc::new(tokio::sync::Mutex::new(App::new("Maze Drawer", width, height)));
     let app_ui = Arc::clone(&app);
 
     // configure logger

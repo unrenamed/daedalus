@@ -109,6 +109,8 @@ impl Clone for MazeSnapshot {
 }
 
 pub struct AppState<'a> {
+    pub width: usize,
+    pub height: usize,
     pub tabs: TabsState<'a>,
     pub is_generator_running: bool,
     pub items: StatefulList<(&'a str, Algorithm)>,
@@ -120,6 +122,8 @@ pub struct AppState<'a> {
 impl<'a> Default for AppState<'a> {
     fn default() -> Self {
         AppState {
+            width: 10,
+            height: 10,
             tabs: TabsState::new(vec!["Tab1", "Tab2"]),
             is_generator_running: false,
             snapshots: None,
@@ -138,8 +142,10 @@ impl<'a> Default for AppState<'a> {
 }
 
 impl<'a> AppState<'a> {
-    pub fn new() -> AppState<'a> {
+    pub fn new(width: usize, height: usize) -> AppState<'a> {
         AppState {
+            width,
+            height,
             ..Default::default()
         }
     }
@@ -232,6 +238,6 @@ impl<'a> AppState<'a> {
     }
 
     fn generate_maze<T: IGenerator>(&self) -> Vec<MazeSnapshot> {
-        T::init(10, 10).run()
+        T::init(self.width, self.height).run()
     }
 }

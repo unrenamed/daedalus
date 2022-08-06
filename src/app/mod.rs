@@ -31,7 +31,7 @@ pub struct App<'a> {
 }
 
 impl<'a> App<'a> {
-    pub fn new(title: &'a str) -> Self {
+    pub fn new(title: &'a str, width: usize, height: usize) -> Self {
         let actions = vec![
             Action::Quit,
             Action::GotoNextTab,
@@ -41,7 +41,7 @@ impl<'a> App<'a> {
             Action::RunMazeGeneration,
         ]
         .into();
-        let state = AppState::new();
+        let state = AppState::new(width, height);
         Self {
             title,
             actions,
