@@ -27,7 +27,12 @@ impl<'a> Widget for MazeContainer<'a> {
             None => area,
         };
 
-        if widget_area.height < 1 {
+        // plus 1 to take into account the western maze wall
+        let min_maze_height = self.grid.height() as u16 + 1;
+        // plus 1 to take into account the western maze wall; multilple by 2 since one cell takes at least 2 characters
+        let min_maze_width = (self.grid.width() as u16 + 1) * 2;
+        // don't render the grid if widget area size is too small to display the grid of factor 1
+        if widget_area.height < min_maze_height || widget_area.width < min_maze_width {
             return;
         }
 
@@ -73,14 +78,13 @@ impl<'a> MazeContainer<'a> {
                 // Y coordinate including maring on the axis Y
                 let ny = y_margin + y as u16 + 1;
                 // X coordinate of a cell in the grid
-                let cx = (x as f64 / grow_factor as f64 / 2 as f64).floor() as usize;
+                let cx = (x as f64 / grow_factor as f64 / 2.0).floor() as usize;
                 // Y coordinate of a cell in the grid
                 let cy = (y as f64 / grow_factor as f64).floor() as usize;
                 // Indicates if a row is a last row of a grid cell
                 let is_last_row = (y as f64 + 1.0) / grow_factor as f64 == cy as f64 + 1.0;
                 // Indicates if a column is a last column of a grid cell
-                let is_last_col =
-                    (x as f64 + 1.0) / grow_factor as f64 / 2 as f64 == cx as f64 + 1.0;
+                let is_last_col = (x as f64 + 1.0) / grow_factor as f64 / 2.0 == cx as f64 + 1.0;
 
                 let walls = self.grid.get_cell((cx, cy)).get_walls();
 
@@ -133,12 +137,12 @@ impl<'a> MazeContainer<'a> {
 
     fn get_grid_margins(&self, grow_factor: u16, area: Rect, grid: &Grid) -> (u16, u16) {
         let grid_width = grid.width() as u16 * 2u16 * grow_factor;
-        let grid_height = grid.height() as u16 * grow_factor;
+        let grid_height = (grid.height() as u16 + 1) * grow_factor;
 
         let x_margin = (area.width - grid_width) / 2;
         let y_margin = (area.height - grid_height) / 2;
 
-        (x_margin + area.left() - 1, y_margin + area.top() - 1)
+        (x_margin + area.left(), y_margin + area.top())
     }
 
     fn add_vertical_wall(&self, (x, y): (u16, u16), buf: &mut Buffer) {
