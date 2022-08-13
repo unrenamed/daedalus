@@ -6,6 +6,7 @@ pub mod hunt_and_kill;
 pub mod kruskal;
 pub mod prim;
 pub mod recursive_backtracking;
+pub mod sidewinder;
 
 pub use aldous_broder::AldousBroder;
 pub use eller::Eller;
@@ -13,6 +14,7 @@ pub use hunt_and_kill::HuntAndKill;
 pub use kruskal::Kruskal;
 pub use prim::Prim;
 pub use recursive_backtracking::RecursiveBacktracking;
+pub use sidewinder::Sidewinder;
 
 pub trait Snapshot {
     fn make_snapshot(&mut self);

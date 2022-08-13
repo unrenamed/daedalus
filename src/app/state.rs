@@ -1,7 +1,7 @@
 use tui::widgets::ListState;
 
 use crate::app::{
-    algos::{AldousBroder, Eller, HuntAndKill, IGenerator, Kruskal, Prim, RecursiveBacktracking},
+    algos::{AldousBroder, Eller, HuntAndKill, IGenerator, Kruskal, Prim, RecursiveBacktracking, Sidewinder},
     grid::Grid,
     utils::types::Pos,
 };
@@ -13,6 +13,7 @@ pub enum Algorithm {
     Kruskal,
     AldousBroder,
     Eller,
+    Sidewinder,
 }
 
 pub struct TabsState<'a> {
@@ -136,6 +137,7 @@ impl<'a> Default for AppState<'a> {
                 ("Kruskal's", Algorithm::Kruskal),
                 ("Aldou-Broder's", Algorithm::AldousBroder),
                 ("Eller's", Algorithm::Eller),
+                ("Sidewinder", Algorithm::Sidewinder),
             ]),
         }
     }
@@ -195,13 +197,12 @@ impl<'a> AppState<'a> {
             if let Some(algo) = self.items.items.get(idx) {
                 let snapshots = match algo.1 {
                     Algorithm::Prims => self.generate_maze::<Prim>(),
-                    Algorithm::RecursiveBacktracking => {
-                        self.generate_maze::<RecursiveBacktracking>()
-                    }
+                    Algorithm::RecursiveBacktracking => self.generate_maze::<RecursiveBacktracking>(),
                     Algorithm::HuntAndKill => self.generate_maze::<HuntAndKill>(),
                     Algorithm::Kruskal => self.generate_maze::<Kruskal>(),
                     Algorithm::AldousBroder => self.generate_maze::<AldousBroder>(),
                     Algorithm::Eller => self.generate_maze::<Eller>(),
+                    Algorithm::Sidewinder => self.generate_maze::<Sidewinder>(),
                 };
 
                 self.snapshots = Some(snapshots);
