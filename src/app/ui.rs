@@ -10,7 +10,7 @@ use tui::{
 use crate::app::{widgets::maze_container::MazeContainer, App};
 use tui_logger::TuiLoggerWidget;
 
-use super::actions::Actions;
+use super::{actions::Actions, grid::Grid};
 
 pub fn draw<B: Backend>(rect: &mut Frame<B>, app: &mut App) {
     let chunks = Layout::default()
@@ -42,6 +42,13 @@ where
 
             f.render_widget(maze_container, chunks[0]);
         }
+    } else {
+        let grid = &Grid::new(app.state.grid_width, app.state.grid_height);
+        let highlights = vec![];
+        let maze_container =
+            MazeContainer::new(&grid, &highlights).block(Block::default().title("Maze").borders(Borders::ALL));
+
+        f.render_widget(maze_container, chunks[0]);
     }
 
     let dashboard_chunks = Layout::default()
