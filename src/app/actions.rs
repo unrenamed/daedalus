@@ -8,8 +8,6 @@ use crate::event::Key;
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum Action {
     Quit,
-    GotoNextTab,
-    GotoPrevTab,
     SelectNextAlgo,
     SelectPrevAlgo,
     RunMazeGeneration,
@@ -18,10 +16,8 @@ pub enum Action {
 impl Action {
     /// All available actions
     pub fn iterator() -> Iter<'static, Action> {
-        static ACTIONS: [Action; 6] = [
+        static ACTIONS: [Action; 4] = [
             Action::Quit,
-            Action::GotoNextTab,
-            Action::GotoPrevTab,
             Action::SelectNextAlgo,
             Action::SelectPrevAlgo,
             Action::RunMazeGeneration,
@@ -33,8 +29,6 @@ impl Action {
     pub fn keys(&self) -> &[Key] {
         match self {
             Action::Quit => &[Key::Ctrl('c'), Key::Char('q')],
-            Action::GotoNextTab => &[Key::Right],
-            Action::GotoPrevTab => &[Key::Left],
             Action::SelectNextAlgo => &[Key::Down],
             Action::SelectPrevAlgo => &[Key::Up],
             Action::RunMazeGeneration => &[Key::Enter],
@@ -47,8 +41,6 @@ impl Display for Action {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let str = match self {
             Action::Quit => "Quit",
-            Action::GotoNextTab => "Goto next tab",
-            Action::GotoPrevTab => "Goto prev tab",
             Action::SelectNextAlgo => "Select next algorithm",
             Action::SelectPrevAlgo => "Select prev algorithm",
             Action::RunMazeGeneration => "Run maze generation process",

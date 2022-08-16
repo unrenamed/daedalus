@@ -34,19 +34,13 @@ impl<'a> App<'a> {
     pub fn new(title: &'a str, width: usize, height: usize) -> Self {
         let actions = vec![
             Action::Quit,
-            Action::GotoNextTab,
-            Action::GotoPrevTab,
             Action::SelectNextAlgo,
             Action::SelectPrevAlgo,
             Action::RunMazeGeneration,
         ]
         .into();
         let state = AppState::new(width, height);
-        Self {
-            title,
-            actions,
-            state,
-        }
+        Self { title, actions, state }
     }
 
     pub fn do_action(&mut self, key: Key) -> AppReturn {
@@ -54,8 +48,6 @@ impl<'a> App<'a> {
             debug!("Run action [{:?}]", action);
 
             match action {
-                Action::GotoNextTab => self.state.goto_next_tab(),
-                Action::GotoPrevTab => self.state.goto_prev_tab(),
                 Action::SelectNextAlgo => self.state.select_next_algo(),
                 Action::SelectPrevAlgo => self.state.select_prev_algo(),
                 Action::RunMazeGeneration => self.state.start_maze_generation(),

@@ -1,9 +1,9 @@
 use tui::{
     backend::Backend,
-    layout::{Constraint, Direction, Layout, Rect},
+    layout::{Constraint, Direction, Layout, Rect, Alignment},
     style::{Color, Modifier, Style},
     text::{Span, Spans},
-    widgets::{Block, Borders, List, ListItem, Tabs, Table, Cell, Row, BorderType},
+    widgets::{Block, Borders, List, ListItem, Table, Cell, Row, BorderType, Paragraph},
     Frame,
 };
 
@@ -12,34 +12,20 @@ use tui_logger::TuiLoggerWidget;
 
 use super::actions::Actions;
 
-pub fn draw<B: Backend>(f: &mut Frame<B>, app: &mut App) {
+pub fn draw<B: Backend>(rect: &mut Frame<B>, app: &mut App) {
     let chunks = Layout::default()
         .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
-        .split(f.size());
+        .split(rect.size());
 
-    let titles = app
-        .state
-        .tabs
-        .titles
-        .iter()
-        .map(|t| Spans::from(Span::styled(*t, Style::default().fg(Color::Green))))
-        .collect();
+    // Title block
+    let title = draw_title(app);
+    rect.render_widget(title, chunks[0]);
 
-    let tabs = Tabs::new(titles)
-        .block(Block::default().borders(Borders::ALL).title(app.title))
-        .highlight_style(Style::default().fg(Color::Yellow))
-        .select(app.state.tabs.index);
-
-    f.render_widget(tabs, chunks[0]);
-
-    match app.state.tabs.index {
-        0 => draw_first_tab(f, app, chunks[1]),
-        1 => draw_second_tab(f, app, chunks[1]),
-        _ => {}
-    };
+    // Body block
+    draw_body(rect, app, chunks[1]);
 }
 
-fn draw_first_tab<B>(f: &mut Frame<B>, app: &mut App, area: Rect)
+fn draw_body<B>(f: &mut Frame<B>, app: &mut App, area: Rect)
 where
     B: Backend,
 {
@@ -102,11 +88,16 @@ where
     f.render_widget(logs, dashboard_chunks[1]);
 }
 
-fn draw_second_tab<B>(_f: &mut Frame<B>, _app: &mut App, _area: Rect)
-where
-    B: Backend,
-{
-    // Draw tab content
+fn draw_title<'a>(app: &'a App) -> Paragraph<'a> {
+    Paragraph::new(app.title)
+        .style(Style::default().fg(Color::LightCyan))
+        .alignment(Alignment::Center)
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .style(Style::default().fg(Color::White))
+                .border_type(BorderType::Plain),
+        )
 }
 
 fn draw_logs<'a>() -> TuiLoggerWidget<'a> {

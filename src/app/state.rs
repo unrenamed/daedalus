@@ -16,29 +16,6 @@ pub enum Algorithm {
     Sidewinder,
 }
 
-pub struct TabsState<'a> {
-    pub titles: Vec<&'a str>,
-    pub index: usize,
-}
-
-impl<'a> TabsState<'a> {
-    pub fn new(titles: Vec<&'a str>) -> TabsState {
-        TabsState { titles, index: 0 }
-    }
-
-    pub fn next(&mut self) {
-        self.index = (self.index + 1) % self.titles.len();
-    }
-
-    pub fn previous(&mut self) {
-        if self.index > 0 {
-            self.index -= 1;
-        } else {
-            self.index = self.titles.len() - 1;
-        }
-    }
-}
-
 pub struct StatefulList<T> {
     pub state: ListState,
     pub items: Vec<T>,
@@ -112,7 +89,6 @@ impl Clone for MazeSnapshot {
 pub struct AppState<'a> {
     pub grid_width: usize,
     pub grid_height: usize,
-    pub tabs: TabsState<'a>,
     pub is_generator_running: bool,
     pub algorithms: StatefulList<(&'a str, Algorithm)>,
     pub snapshots: Option<Vec<MazeSnapshot>>,
@@ -125,7 +101,6 @@ impl<'a> Default for AppState<'a> {
         AppState {
             grid_width: 10,
             grid_height: 10,
-            tabs: TabsState::new(vec!["Tab1", "Tab2"]),
             is_generator_running: false,
             snapshots: None,
             curr_algo_idx: 0,
@@ -150,14 +125,6 @@ impl<'a> AppState<'a> {
             grid_height,
             ..Default::default()
         }
-    }
-
-    pub fn goto_next_tab(&mut self) {
-        self.tabs.next();
-    }
-
-    pub fn goto_prev_tab(&mut self) {
-        self.tabs.previous();
     }
 
     pub fn select_prev_algo(&mut self) {

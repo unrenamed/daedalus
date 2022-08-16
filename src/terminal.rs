@@ -25,7 +25,7 @@ pub async fn run(tick_rate: Duration, width: usize, height: usize) -> Result<()>
     let mut terminal = Terminal::new(backend)?;
 
     // create app
-    let app = Arc::new(tokio::sync::Mutex::new(App::new("Maze Drawer", width, height)));
+    let app = Arc::new(tokio::sync::Mutex::new(App::new("Maze Generator", width, height)));
     let app_ui = Arc::clone(&app);
 
     // configure logger
