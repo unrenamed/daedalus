@@ -1,3 +1,6 @@
+use std::time::Instant;
+
+use log::info;
 use tui::widgets::ListState;
 
 use crate::app::{
@@ -152,6 +155,7 @@ impl<'a> AppState<'a> {
             self.curr_algo_idx += 1;
         } else {
             self.is_generator_running = false;
+            info!("🔃 Performed {} iterations to draw a maze", self.curr_algo_idx);
         }
     }
 
@@ -206,6 +210,11 @@ impl<'a> AppState<'a> {
     }
 
     fn generate_maze<T: IGenerator>(&self) -> Vec<MazeSnapshot> {
-        T::init(self.grid_width, self.grid_height).run()
+        info!("🚀 Start maze generation");
+        let start = Instant::now();
+        let maze = T::init(self.grid_width, self.grid_height).run();
+        let duration = start.elapsed();
+        info!("🏁 Finish maze generation in {:?}", duration);
+        maze
     }
 }
