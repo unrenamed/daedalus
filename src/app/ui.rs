@@ -66,7 +66,7 @@ where
     // Iterate through all elements in the `items` app and append some debug text to it.
     let items: Vec<ListItem> = app
         .state
-        .items
+        .algorithms
         .items
         .iter()
         .map(|i| {
@@ -91,7 +91,7 @@ where
         .highlight_symbol("> ");
 
     // We can now render the item list
-    f.render_stateful_widget(items, control_panel_chunks[0], &mut app.state.items.state);
+    f.render_stateful_widget(items, control_panel_chunks[0], &mut app.state.algorithms.state);
 
     // Draw the help block
     let help = draw_help(&app.actions);

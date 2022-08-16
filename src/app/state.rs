@@ -25,6 +25,7 @@ impl<'a> TabsState<'a> {
     pub fn new(titles: Vec<&'a str>) -> TabsState {
         TabsState { titles, index: 0 }
     }
+
     pub fn next(&mut self) {
         self.index = (self.index + 1) % self.titles.len();
     }
@@ -38,7 +39,6 @@ impl<'a> TabsState<'a> {
     }
 }
 
-// todo: rename struct and fields
 pub struct StatefulList<T> {
     pub state: ListState,
     pub items: Vec<T>,
@@ -110,27 +110,27 @@ impl Clone for MazeSnapshot {
 }
 
 pub struct AppState<'a> {
-    pub width: usize,
-    pub height: usize,
+    pub grid_width: usize,
+    pub grid_height: usize,
     pub tabs: TabsState<'a>,
     pub is_generator_running: bool,
-    pub items: StatefulList<(&'a str, Algorithm)>,
+    pub algorithms: StatefulList<(&'a str, Algorithm)>,
     pub snapshots: Option<Vec<MazeSnapshot>>,
-    pub curr_idx: usize,
+    pub curr_algo_idx: usize,
     pub running_algo_idx: Option<usize>,
 }
 
 impl<'a> Default for AppState<'a> {
     fn default() -> Self {
         AppState {
-            width: 10,
-            height: 10,
+            grid_width: 10,
+            grid_height: 10,
             tabs: TabsState::new(vec!["Tab1", "Tab2"]),
             is_generator_running: false,
             snapshots: None,
-            curr_idx: 0,
+            curr_algo_idx: 0,
             running_algo_idx: None,
-            items: StatefulList::with_items(vec![
+            algorithms: StatefulList::with_items(vec![
                 ("Recursive Backtracker", Algorithm::RecursiveBacktracking),
                 ("Prim's", Algorithm::Prims),
                 ("Hunt & Kill", Algorithm::HuntAndKill),
@@ -144,10 +144,10 @@ impl<'a> Default for AppState<'a> {
 }
 
 impl<'a> AppState<'a> {
-    pub fn new(width: usize, height: usize) -> AppState<'a> {
+    pub fn new(grid_width: usize, grid_height: usize) -> AppState<'a> {
         AppState {
-            width,
-            height,
+            grid_width,
+            grid_height,
             ..Default::default()
         }
     }
@@ -162,19 +162,19 @@ impl<'a> AppState<'a> {
 
     pub fn select_prev_algo(&mut self) {
         if !self.is_generator_running {
-            self.items.previous();
+            self.algorithms.previous();
         }
     }
 
     pub fn select_next_algo(&mut self) {
         if !self.is_generator_running {
-            self.items.next();
+            self.algorithms.next();
         }
     }
 
     pub fn on_tick(&mut self) {
-        if self.items.state.selected().is_none() {
-            self.items.next();
+        if self.algorithms.state.selected().is_none() {
+            self.algorithms.next();
         }
 
         if !self.is_generator_running {
@@ -182,7 +182,7 @@ impl<'a> AppState<'a> {
         }
 
         if self.get_next_snapshot().is_some() {
-            self.curr_idx += 1;
+            self.curr_algo_idx += 1;
         } else {
             self.is_generator_running = false;
         }
@@ -193,8 +193,8 @@ impl<'a> AppState<'a> {
             return;
         }
 
-        if let Some(idx) = self.items.state.selected() {
-            if let Some(algo) = self.items.items.get(idx) {
+        if let Some(idx) = self.algorithms.state.selected() {
+            if let Some(algo) = self.algorithms.items.get(idx) {
                 let snapshots = match algo.1 {
                     Algorithm::Prims => self.generate_maze::<Prim>(),
                     Algorithm::RecursiveBacktracking => self.generate_maze::<RecursiveBacktracking>(),
@@ -206,7 +206,7 @@ impl<'a> AppState<'a> {
                 };
 
                 self.snapshots = Some(snapshots);
-                self.curr_idx = 0;
+                self.curr_algo_idx = 0;
                 self.running_algo_idx = Some(idx);
                 self.is_generator_running = true;
             }
@@ -214,16 +214,16 @@ impl<'a> AppState<'a> {
     }
 
     pub fn get_next_snapshot(&self) -> Option<&MazeSnapshot> {
-        self.get_snapshot(self.curr_idx + 1)
+        self.get_snapshot(self.curr_algo_idx + 1)
     }
 
     pub fn get_curr_snapshot(&self) -> Option<&MazeSnapshot> {
-        self.get_snapshot(self.curr_idx)
+        self.get_snapshot(self.curr_algo_idx)
     }
 
     pub fn get_running_algorithm_title(&self) -> Option<&str> {
         if let Some(idx) = self.running_algo_idx {
-            if let Some(algo) = self.items.items.get(idx) {
+            if let Some(algo) = self.algorithms.items.get(idx) {
                 return Some(algo.0);
             }
         }
@@ -239,6 +239,6 @@ impl<'a> AppState<'a> {
     }
 
     fn generate_maze<T: IGenerator>(&self) -> Vec<MazeSnapshot> {
-        T::init(self.width, self.height).run()
+        T::init(self.grid_width, self.grid_height).run()
     }
 }
