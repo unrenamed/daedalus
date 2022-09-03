@@ -12,7 +12,7 @@ static MAZE_MAX_WIDTH: usize = 45;
 static MAZE_MAX_HEIGHT: usize = 45;
 
 #[derive(Debug, FromArgs)]
-#[argh(description = "Generate mazes")]
+#[argh(description = "Daedalus is a maze generator for the terminal written in Rust. It can create mazes using different algorithms and show the process step-by-step. Simple as that.")]
 struct Cli {
     /// time in ms between two ticks. defaults to: 33ms (30 FPS)
     #[argh(option, short = 't', default = "33")]
