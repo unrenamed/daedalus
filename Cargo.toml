@@ -2,6 +2,14 @@
 name = "daedalus"
 version = "0.1.0"
 edition = "2021"
+authors = ["unrenamed <renkonazbka@gmail.com>"]
+description = "Maze generator for the terminal written in Rust"
+readme = "README.md"
+license = "Apache-2.0"
+homepage = "https://github.com/unrenamed/daedalus"
+repository = "https://github.com/unrenamed/daedalus"
+keywords = ["maze", "labyrinth", "tui-rs", "algorithm"]
+categories = ["algorithms"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
