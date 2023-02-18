@@ -1,8 +1,7 @@
 pub mod cell;
 
 use super::utils::types::Pos;
-use cell::Cell;
-use cell::CellStatus;
+use cell::{Cell, CellStatus};
 use std::fmt;
 
 #[derive(Debug, Clone)]
@@ -23,15 +22,13 @@ impl fmt::Display for TransitError {
     }
 }
 
-type Cells = Vec<Vec<Cell>>;
-type CellStatuses = Vec<Vec<CellStatus>>;
 type TransitResult<T> = Result<T, TransitError>;
 
 pub struct Grid {
     width: usize,
     height: usize,
-    cells: Cells,
-    cell_statuses: CellStatuses,
+    cells: Vec<Cell>,
+    cell_statuses: Vec<CellStatus>,
 }
 
 impl Grid {
@@ -39,8 +36,8 @@ impl Grid {
         Grid {
             width,
             height,
-            cells: vec![vec![Cell::default(); width]; height],
-            cell_statuses: vec![vec![CellStatus::default(); width]; height],
+            cells: vec![Cell::default(); width * height],
+            cell_statuses: vec![CellStatus::default(); width * height],
         }
     }
 
@@ -53,58 +50,52 @@ impl Grid {
     }
 
     pub fn mark_cell(&mut self, pos: Pos) {
-        let (x, y) = pos;
-        self.cell_statuses[y][x].mark()
+        self.get_cell_status_mut(pos).mark()
     }
 
     pub fn visit_cell(&mut self, pos: Pos) {
-        let (x, y) = pos;
-        self.cell_statuses[y][x].visit()
+        self.get_cell_status_mut(pos).visit()
     }
 
     pub fn is_cell_visited(&self, pos: Pos) -> bool {
-        let (x, y) = pos;
-        self.cell_statuses[y][x].visited()
+        self.get_cell_status(pos).visited()
     }
 
     pub fn is_cell_marked(&self, pos: Pos) -> bool {
-        let (x, y) = pos;
-        self.cell_statuses[y][x].marked()
+        self.get_cell_status(pos).marked()
     }
 
     pub fn is_cell_carved(&self, pos: Pos, direction: Cell) -> bool {
-        let (x, y) = pos;
-        self.cells[y][x].contains(direction)
+        self.get_cell(pos).contains(direction)
     }
 
     pub fn carve_passage(&mut self, pos: Pos, direction: Cell) -> TransitResult<Pos> {
-        let (x, y) = pos;
-        let (nx, ny) = self.get_next_cell_pos(pos, direction)?;
+        let npos = self.get_next_cell_pos(pos, direction)?;
 
         match direction {
             Cell::NORTH => {
-                self.cells[y][x] |= Cell::NORTH;
-                self.cells[ny][nx] |= Cell::SOUTH;
+                *self.get_cell_mut(pos) |= Cell::NORTH;
+                *self.get_cell_mut(npos) |= Cell::SOUTH;
             }
             Cell::SOUTH => {
-                self.cells[y][x] |= Cell::SOUTH;
-                self.cells[ny][nx] |= Cell::NORTH;
+                *self.get_cell_mut(pos) |= Cell::SOUTH;
+                *self.get_cell_mut(npos) |= Cell::NORTH;
             }
             Cell::EAST => {
-                self.cells[y][x] |= Cell::EAST;
-                self.cells[ny][nx] |= Cell::WEST;
+                *self.get_cell_mut(pos) |= Cell::EAST;
+                *self.get_cell_mut(npos) |= Cell::WEST;
             }
             Cell::WEST => {
-                self.cells[y][x] |= Cell::WEST;
-                self.cells[ny][nx] |= Cell::EAST;
+                *self.get_cell_mut(pos) |= Cell::WEST;
+                *self.get_cell_mut(npos) |= Cell::EAST;
             }
             _ => (),
         }
 
         self.visit_cell(pos);
-        self.visit_cell((nx, ny));
+        self.visit_cell(npos);
 
-        Ok((nx, ny))
+        Ok(npos)
     }
 
     pub fn get_next_cell_pos(&mut self, pos: Pos, direction: Cell) -> TransitResult<Pos> {
@@ -119,6 +110,26 @@ impl Grid {
             _ => (x, y),
         };
         Ok((nx, ny))
+    }
+
+    fn get_cell_status(&self, pos: Pos) -> &CellStatus {
+        let (x, y) = pos;
+        &self.cell_statuses[y * self.width + x]
+    }
+
+    fn get_cell_status_mut(&mut self, pos: Pos) -> &mut CellStatus {
+        let (x, y) = pos;
+        &mut self.cell_statuses[y * self.width + x]
+    }
+
+    fn get_cell(&self, pos: Pos) -> &Cell {
+        let (x, y) = pos;
+        &self.cells[y * self.width + x]
+    }
+
+    fn get_cell_mut(&mut self, pos: Pos) -> &mut Cell {
+        let (x, y) = pos;
+        &mut self.cells[y * self.width + x]
     }
 
     fn validate_transit(&self, pos: Pos, direction: Cell) -> TransitResult<()> {
