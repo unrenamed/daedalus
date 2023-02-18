@@ -1,5 +1,5 @@
 use crate::app::{
-    grid::pole::Pole,
+    grid::cell::Cell,
     state::MazeSnapshot,
     utils::{
         arena::{ArenaTree, NodeId},
@@ -10,7 +10,7 @@ use rand::prelude::*;
 
 use super::{Generator, IGenerator, Snapshot};
 
-type Edge = (usize, usize, Pole);
+type Edge = (usize, usize, Cell);
 type Edges = Vec<Edge>;
 
 pub struct Kruskal {
@@ -31,10 +31,10 @@ impl Kruskal {
         for y in 0..self.generator.grid.height() {
             for x in 0..self.generator.grid.width() {
                 if y > 0 {
-                    edges.push((x, y, Pole::N))
+                    edges.push((x, y, Cell::NORTH))
                 }
                 if x > 0 {
-                    edges.push((x, y, Pole::W))
+                    edges.push((x, y, Cell::WEST))
                 }
             }
         }

@@ -1,7 +1,7 @@
 use crate::app::{
-    grid::pole::Pole::{self},
     state::MazeSnapshot,
     utils::types::Pos,
+    grid::cell::Cell as GridCell,
 };
 use rand::prelude::*;
 
@@ -117,7 +117,7 @@ impl Eller {
 
             state.connect(cell_id, next_cell_id);
             let (x, y) = state.get_cell_pos(cell_id);
-            self.generator.grid.carve_passage((x, y), Pole::E).unwrap();
+            self.generator.grid.carve_passage((x, y), GridCell::EAST).unwrap();
 
             self.generator.highlights.push((x, y));
             self.generator.make_snapshot();
@@ -135,7 +135,7 @@ impl Eller {
         for (set_id, cells) in state.sets() {
             for cell_id in self.cells_to_connect(cells) {
                 let (x, y) = state.get_cell_pos(cell_id);
-                self.generator.grid.carve_passage((x, y), Pole::S).unwrap();
+                self.generator.grid.carve_passage((x, y), GridCell::SOUTH).unwrap();
                 next_state.add(cell_id, set_id, (x, y + 1));
 
                 self.generator.highlights.push((x, y));

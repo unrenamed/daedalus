@@ -6,7 +6,7 @@ use tui::{
 };
 
 use crate::app::{
-    grid::{pole::Pole, Grid},
+    grid::{Grid, cell::Cell},
     utils::types::Pos,
 };
 
@@ -86,27 +86,25 @@ impl<'a> MazeContainer<'a> {
                 // Indicates if a column is a last column of a grid cell
                 let is_last_col = (x as f64 + 1.0) / grow_factor as f64 / 2.0 == cx as f64 + 1.0;
 
-                let walls = self.grid.get_cell((cx, cy)).get_walls();
-
                 match (is_last_row, is_last_col) {
                     (false, false) => self.add_passage((nx, ny), Some((cx, cy)), buf),
                     (false, true) => {
-                        if walls.carved(Pole::E) {
+                        if self.grid.is_cell_carved((cx, cy), Cell::EAST) {
                             self.add_passage((nx, ny), Some((cx, cy)), buf);
                         } else {
                             self.add_vertical_wall((nx, ny), buf);
                         }
                     }
                     (true, false) => {
-                        if walls.carved(Pole::S) {
+                        if self.grid.is_cell_carved((cx, cy), Cell::SOUTH) {
                             self.add_passage((nx, ny), Some((cx, cy)), buf);
                         } else {
                             self.add_horizontal_wall((nx, ny), Some((cx, cy)), buf);
                         }
                     }
                     (true, true) => {
-                        if walls.carved(Pole::E) {
-                            if walls.carved(Pole::S)
+                        if self.grid.is_cell_carved((cx, cy), Cell::EAST) {
+                            if self.grid.is_cell_carved((cx, cy), Cell::SOUTH)
                                 || self.next_cell_carved_south(cx, cy, self.grid)
                             {
                                 self.add_passage((nx, ny), Some((cx, cy)), buf);
@@ -128,9 +126,7 @@ impl<'a> MazeContainer<'a> {
         let grid_width = grid.width() as f64 * 2.0;
         let grid_height = grid.height() as f64;
         let width_factor = (area.width as f64 / (grid_width + margin)).floor().max(1.0);
-        let height_factor = (area.height as f64 / (grid_height + margin))
-            .floor()
-            .max(1.0);
+        let height_factor = (area.height as f64 / (grid_height + margin)).floor().max(1.0);
 
         width_factor.min(height_factor) as u16
     }
@@ -175,7 +171,6 @@ impl<'a> MazeContainer<'a> {
         if cx + 1 >= grid.height() {
             return false;
         }
-        let walls = grid.get_cell((cx + 1, cy)).get_walls();
-        walls.carved(Pole::S)
+        grid.is_cell_carved((cx + 1, cy), Cell::SOUTH)
     }
 }

@@ -1,7 +1,7 @@
 use crate::app::{
-    grid::pole::Pole::{E, N, S, W},
     state::MazeSnapshot,
     utils::{random::get_start_pos, types::Pos},
+    grid::cell::Cell,
 };
 use rand::prelude::*;
 
@@ -15,7 +15,7 @@ pub struct HuntAndKill {
 
 impl HuntAndKill {
     fn walk(&mut self, pos: Pos) -> Option<Pos> {
-        let mut directions = [N, E, W, S];
+        let mut directions = [Cell::NORTH, Cell::SOUTH, Cell::WEST, Cell::EAST];
         directions.shuffle(&mut rand::thread_rng());
 
         for dir in directions {
@@ -30,7 +30,7 @@ impl HuntAndKill {
     }
 
     fn hunt(&mut self) -> Option<Pos> {
-        let directions = [N, E, W, S];
+        let directions = [Cell::NORTH, Cell::SOUTH, Cell::WEST, Cell::EAST];
 
         for y in self.hunt_start_index..self.generator.grid.height() {
             for x in 0..self.generator.grid.width() {

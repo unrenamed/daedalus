@@ -1,5 +1,5 @@
 use crate::app::{
-    grid::pole::Pole,
+    grid::cell::Cell,
     state::MazeSnapshot,
     utils::{random::get_start_pos, types::Pos},
 };
@@ -105,18 +105,18 @@ impl IGenerator for Prim {
     }
 }
 
-fn direction(x: usize, y: usize, nx: usize, ny: usize) -> Option<Pole> {
+fn direction(x: usize, y: usize, nx: usize, ny: usize) -> Option<Cell> {
     if x < nx {
-        return Some(Pole::E);
+        return Some(Cell::EAST);
     }
     if x > nx {
-        return Some(Pole::W);
+        return Some(Cell::WEST);
     }
     if y < ny {
-        return Some(Pole::S);
+        return Some(Cell::SOUTH);
     }
     if y > ny {
-        return Some(Pole::N);
+        return Some(Cell::NORTH);
     }
 
     None
