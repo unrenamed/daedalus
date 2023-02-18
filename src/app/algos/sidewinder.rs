@@ -1,4 +1,4 @@
-use crate::app::{grid::pole::Pole, state::MazeSnapshot};
+use crate::app::{state::MazeSnapshot, grid::cell::Cell};
 use rand::prelude::*;
 
 use super::{Generator, IGenerator, Snapshot};
@@ -18,10 +18,10 @@ impl Sidewinder {
                 let carve_east: bool = rng.gen();
 
                 if y == 0 || (carve_east && x + 1 < self.generator.grid.width()) {
-                    self.generator.grid.carve_passage((x, y), Pole::E).ok();
+                    self.generator.grid.carve_passage((x, y), Cell::EAST).ok();
                 } else {
                     let rand_x = rng.gen_range(run_start..=x);
-                    self.generator.grid.carve_passage((rand_x, y), Pole::N).ok();
+                    self.generator.grid.carve_passage((rand_x, y), Cell::NORTH).ok();
                     run_start = x + 1;
                 }
 

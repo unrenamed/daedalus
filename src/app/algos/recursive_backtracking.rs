@@ -1,8 +1,4 @@
-use crate::app::{
-    grid::pole::Pole::{E, N, S, W},
-    state::MazeSnapshot,
-    utils::types::Pos,
-};
+use crate::app::{state::MazeSnapshot, utils::types::Pos, grid::cell::Cell};
 use rand::prelude::*;
 
 use super::{Generator, IGenerator, Snapshot};
@@ -13,7 +9,7 @@ pub struct RecursiveBacktracking {
 
 impl RecursiveBacktracking {
     fn carve_passages_from(&mut self, pos: Pos) {
-        let mut dirs = [N, W, E, S];
+        let mut dirs = [Cell::NORTH, Cell::SOUTH, Cell::WEST, Cell::EAST];
         dirs.shuffle(&mut rand::thread_rng());
 
         for dir in dirs {

@@ -126,6 +126,7 @@ name = "daedalus"
 version = "0.1.0"
 dependencies = [
  "argh",
+ "bitflags",
  "crossterm 0.24.0",
  "eyre",
  "lazy_static",

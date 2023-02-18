@@ -1,8 +1,4 @@
-use crate::app::{
-    grid::pole::Pole::{E, N, S, W},
-    state::MazeSnapshot,
-    utils::random::get_start_pos,
-};
+use crate::app::{grid::cell::Cell, state::MazeSnapshot, utils::random::get_start_pos};
 use rand::prelude::*;
 
 use super::{Generator, IGenerator, Snapshot};
@@ -30,7 +26,7 @@ impl IGenerator for AldousBroder {
             self.generator.highlights.push((x, y));
             self.generator.make_snapshot();
 
-            let mut directions = [N, E, W, S];
+            let mut directions = [Cell::NORTH, Cell::SOUTH, Cell::WEST, Cell::EAST];
             directions.shuffle(&mut rand::thread_rng());
 
             for dir in directions {
